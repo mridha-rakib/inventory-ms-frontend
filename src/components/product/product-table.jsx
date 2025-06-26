@@ -3,7 +3,6 @@
 import useProductTableFilter from "@/hooks/use-product-table";
 import { useGetProductsQuery } from "@/redux/slices/productsApiSlice";
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import { getColumns } from "./table/columns";
 import { DataTable } from "./table/table";
 import { Input } from "@/components/ui/input";

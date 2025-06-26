@@ -2,7 +2,7 @@
 
 import CreateProductDialog from "@/components/product/create-product-dialog";
 import ProductTable from "@/components/product/product-table";
-import React from "react";
+import React, { Suspense } from "react";
 
 const page = () => {
   return (
@@ -17,7 +17,9 @@ const page = () => {
         <CreateProductDialog />
       </div>
       <div>
-        <ProductTable />
+        <Suspense fallback={<div>Loading products...</div>}>
+          <ProductTable />
+        </Suspense>
       </div>
     </div>
   );

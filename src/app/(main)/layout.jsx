@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import { useSelector } from "react-redux";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export default function layout({ children }) {
   const { userInfo } = useSelector((state) => state.auth);
@@ -22,7 +23,9 @@ export default function layout({ children }) {
       <SidebarInset>
         <main>
           <Header />
-          <div className="p-3">{children}</div>
+          <NuqsAdapter>
+            <div className="p-3">{children}</div>
+          </NuqsAdapter>
         </main>
       </SidebarInset>
     </SidebarProvider>

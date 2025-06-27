@@ -1,17 +1,7 @@
 "use client";
 
 import InvAnalytics from "@/components/inv-dashboard/inventory-analytics";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  AlertTriangle,
-  AlertTriangleIcon,
-  Package,
-  Plus,
-  UserCheck,
-  Users,
-} from "lucide-react";
 
 export default function Home() {
   return (

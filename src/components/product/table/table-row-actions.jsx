@@ -13,12 +13,17 @@ import { useDeleteProductMutation } from "@/redux/slices/productsApiSlice";
 import { useState } from "react";
 import { toast } from "sonner";
 import UpdateProductDialog from "../update-product-dialog";
+import { useSelector } from "react-redux";
+import PermissionsGuard from "@/components/reusable/permissions-guard";
 
 export function DataTableRowActions({ row }) {
   const [openDeleteDialog, setOpenDialog] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
 
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+  const isAdmin = userInfo?.isAdmin || false;
 
   const productId = row.original._id;
   const productName = row.original.name || row.original.title || "this product";
@@ -49,21 +54,26 @@ export function DataTableRowActions({ row }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem
-            className={`!text-destructive cursor-pointer`}
-            onClick={() => setOpenUpdateDialog(true)}
-          >
-            Update product
-            <DropdownMenuShortcut>⌘</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className={`!text-destructive cursor-pointer`}
-            onClick={() => setOpenDialog(true)}
-          >
-            Delete Product
-            <DropdownMenuShortcut>⌫</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <PermissionsGuard requiredPermission="user">
+            <DropdownMenuItem
+              className={`!text-destructive cursor-pointer`}
+              onClick={() => setOpenUpdateDialog(true)}
+            >
+              Update product
+              <DropdownMenuShortcut>⌘</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </PermissionsGuard>
+          <PermissionsGuard requiredPermission="admin">
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              className={`!text-destructive cursor-pointer`}
+              onClick={() => setOpenDialog(true)}
+            >
+              Delete Product
+              <DropdownMenuShortcut>⌫</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </PermissionsGuard>
         </DropdownMenuContent>
       </DropdownMenu>
 

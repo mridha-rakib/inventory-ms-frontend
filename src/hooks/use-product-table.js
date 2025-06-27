@@ -2,7 +2,7 @@ import { parseAsString, useQueryStates } from "nuqs";
 
 const useProductTableFilter = () => {
   return useQueryStates({
-    keyword: parseAsString,
+    keyword: parseAsString.withDefault(""),
   });
 };
 

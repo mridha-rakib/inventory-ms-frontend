@@ -1,4 +1,3 @@
-import { Column, ColumnDef, Row } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./table-column-header";
 import { DataTableRowActions } from "./table-row-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -37,6 +36,28 @@ export const getColumns = () => {
       },
     },
     {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Description" />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="max-w-xs break-words whitespace-normal">
+            {row.original.description}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "price",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Price" />
+      ),
+      cell: ({ row }) => {
+        return <div className=" space-x-2">{row.original.price}</div>;
+      },
+    },
+    {
       accessorKey: "stock",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Stock" />
@@ -70,6 +91,7 @@ export const getColumns = () => {
         return <div className=" space-x-2">{row.original.category}</div>;
       },
     },
+
     {
       accessorKey: "createdAt",
       header: ({ column }) => (

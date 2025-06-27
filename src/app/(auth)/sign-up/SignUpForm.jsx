@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRegisterMutation } from "@/redux/slices/usersApiSlice";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
-
+import { useRef } from "react";
 import { Loader2 } from "lucide-react";
 
 const registerSchema = z.object({
@@ -29,9 +29,27 @@ const registerSchema = z.object({
     .email("Invalid email address")
     .min(1, { message: "Email is required" }),
   password: z.string().trim().min(1, { message: "Password is required" }),
+  image: z
+    .instanceof(File)
+    .optional()
+    .refine((file) => {
+      if (!file) return true;
+      return true;
+    })
+    .refine((file) => {
+      if (!file) return true;
+      return file.size <= 5 * 1024 * 1024;
+    }, "File size must be less than 5MB")
+    .refine((file) => {
+      if (!file) return true;
+      return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
+        file.type
+      );
+    }, "Only JPEG, PNG, and WebP images are allowed"),
 });
 
 const SignUpForm = () => {
+  const fileInputRef = useRef(null);
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const dispatch = useDispatch();
@@ -52,6 +70,7 @@ const SignUpForm = () => {
       name: "",
       email: "",
       password: "",
+      image: undefined,
     },
   });
 
@@ -59,10 +78,20 @@ const SignUpForm = () => {
     setError("");
     startTransition(async () => {
       try {
-        const userData = await register(values).unwrap();
+        const formData = new FormData();
+
+        formData.append("name", values.name);
+        formData.append("email", values.email);
+        formData.append("password", values.password);
+
+        if (values.image instanceof File) {
+          formData.append("image", values.image);
+        }
+
+        const userData = await register(formData).unwrap();
         dispatch(setCredentials(userData));
         toast.success("User registration successfully");
-        router.push("/home"); 
+        router.push("/home");
       } catch (error) {
         console.log(error);
         const errorMessage =
@@ -138,6 +167,33 @@ const SignUpForm = () => {
                     </FormLabel>
                     <FormControl>
                       <Input type="password" className="!h-[48px]" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field: { onChange, value, ...field } }) => (
+                  <FormItem>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                      Image
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="!h-[48px]"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          onChange(file || undefined);
+                        }}
+                        {...field}
+                        value={undefined}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

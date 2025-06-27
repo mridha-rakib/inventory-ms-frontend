@@ -5,6 +5,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
+  credentials: "include",
+  
 });
 
 async function baseQueryWithAuth(args, api, extra) {

@@ -3,6 +3,7 @@
 import useProductTableFilter from "@/hooks/use-product-table";
 import { useGetProductsQuery } from "@/redux/slices/productsApiSlice";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { getColumns } from "./table/columns";
 import { DataTable } from "./table/table";
 import { Input } from "@/components/ui/input";
@@ -16,16 +17,29 @@ const ProductTable = () => {
 
   const columns = getColumns();
 
+  const cleanFilters = Object.fromEntries(
+    Object.entries(filters).filter(
+      ([key, value]) =>
+        value !== null &&
+        value !== "" &&
+        value !== undefined &&
+        value !== "null" &&
+        String(value).trim() !== ""
+    )
+  );
+
   const { data, isLoading, isError, error, isFetching, refetch } =
     useGetProductsQuery({
-      filters,
+      filters: cleanFilters,
       pageNumber,
       pageSize,
     });
-
-  const products = data?.data?.products;
+  // data.products
+  const products = data?.data?.products || [];
   const paginationData = data?.data?.pagination;
   const totalCount = paginationData?.totalCount || 0;
+
+  console.log("Hit Products: ", products);
 
   const handlePageChange = (page) => {
     setPageNumber(page);
@@ -33,7 +47,13 @@ const ProductTable = () => {
 
   const handlePageSizeChange = (size) => {
     setPageSize(size);
+    setPageNumber(1);
   };
+
+  console.log("Filters:", filters);
+  console.log("Clean Filters:", cleanFilters);
+  console.log("API Response:", data);
+  console.log("Products:", products);
 
   return (
     <div className="w-full relative">
@@ -61,6 +81,15 @@ const ProductTable = () => {
 };
 
 const DataTableFilterToolbar = ({ isLoading, filters, setFilters }) => {
+  const hasActiveFilters = Object.values(filters).some(
+    (value) =>
+      value !== null &&
+      value !== "" &&
+      value !== undefined &&
+      value !== "null" &&
+      String(value).trim() !== ""
+  );
+
   return (
     <div className="flex flex-col lg:flex-row w-full items-start space-y-2 mb-2 lg:mb-0 lg:space-x-2  lg:space-y-0">
       <Input
@@ -74,9 +103,7 @@ const DataTableFilterToolbar = ({ isLoading, filters, setFilters }) => {
         className="h-8 w-full lg:w-[250px]"
       />
 
-      {Object.values(filters).some(
-        (value) => value !== null && value !== ""
-      ) && (
+      {hasActiveFilters && (
         <Button
           disabled={isLoading}
           variant="ghost"

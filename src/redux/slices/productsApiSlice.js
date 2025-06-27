@@ -5,10 +5,26 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: ({ keyword, pageNumber, pageSize }) => ({
-        url: `${API_BASE_URL}/products`,
-        params: { keyword, pageNumber, pageSize },
-      }),
+      query: ({ filters = {}, pageNumber = 1, pageSize = 10 }) => {
+        const cleanFilters = Object.fromEntries(
+          Object.entries(filters).filter(
+            ([key, value]) =>
+              value !== null &&
+              value !== "" &&
+              value !== undefined &&
+              value !== "null"
+          )
+        );
+
+        return {
+          url: `${API_BASE_URL}/products`,
+          params: {
+            ...cleanFilters,
+            pageNumber,
+            pageSize,
+          },
+        };
+      },
       keepUnusedDataFor: 5,
       providesTags: ["Product"],
     }),

@@ -8,12 +8,13 @@ const InvAnalytics = () => {
   const filters = "";
   const pageNumber = undefined;
   const pageSize = 10;
-  const { data, isLoading, isError, error, isFetching, refetch } =
-    useGetProductsQuery({
-      filters,
-      pageNumber,
-      pageSize,
-    });
+  const { data, isLoading } = useGetProductsQuery({
+    filters,
+    pageNumber,
+    pageSize,
+  });
+
+  const { data: user, isLoading: isUserDataLoading } = useGetTotalUserQuery();
 
   const totalCount = data?.data?.pagination?.totalCount || 0;
 
@@ -24,7 +25,11 @@ const InvAnalytics = () => {
         title="Total product"
         value={totalCount}
       />
-      <AnalyticsCard isLoading={isLoading} title="Employees" value={13} />
+      <AnalyticsCard
+        isLoading={isLoading}
+        title="Employees"
+        value={user?.totalUsers}
+      />
       <AnalyticsCard isLoading={isLoading} title="Supplier" value={20} />
       <AnalyticsCard
         isLoading={isLoading}

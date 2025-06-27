@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "@/redux/slices/usersApiSlice";
 import { setCredentials } from "@/redux/slices/authSlice";
 import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 const loginSchema = z.object({
   email: z
@@ -54,16 +55,15 @@ const LoginForm = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader className="animate-spin" />;
   }
 
   const onSubmit = (values) => {
     setError("");
     startTransition(async () => {
       try {
-        console.log(values);
         const userData = await login(values).unwrap();
-        dispatch(setCredentials({ ...userData }));
+        dispatch(setCredentials(userData));
         toast.success("Successfully login");
         router.push("/home");
       } catch (error) {

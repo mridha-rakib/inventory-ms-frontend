@@ -7,29 +7,38 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { useLogoutMutation } from "@/redux/slices/usersApiSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { logout as logoutAction } from "@/redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const LogoutDialog = (props) => {
   const router = useRouter();
-  const { isOpen, setIsOpen, onLogoutSuccess } = props;
+  const { isOpen, setIsOpen } = props;
+  const dispatch = useDispatch();
 
   const [logout, { isLoading }] = useLogoutMutation();
 
-  const handleLogout = useCallback(async () => {
+  const handleLogout = async () => {
     try {
       await logout().unwrap();
+      dispatch(logoutAction());
       setIsOpen(false);
       router.push("/");
     } catch (error) {
-      console.error("Failed to logout:", error);
-      toast.error(err?.data?.message || "Failed to logout.");
+      console.error("Logout error:", error); // Debug log
+
+      // Check if it's actually a successful logout but with different response structure
+      if (error?.status === 200 || error?.status === 204) {
+        setIsOpen(false);
+        router.push("/");
+        return;
+      }
+      toast.error(error?.data?.message || "Failed to logout.");
     }
-  }, [logout, isLoading, router, setIsOpen]);
+  };
 
   return (
     <>
@@ -47,7 +56,11 @@ const LogoutDialog = (props) => {
               {isLoading && <Loader className="animate-spin" />}
               Sign out
             </Button>
-            <Button type="button" onClick={() => setIsOpen(false)}>
+            <Button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
           </DialogFooter>

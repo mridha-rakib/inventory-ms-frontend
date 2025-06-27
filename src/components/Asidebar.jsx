@@ -127,9 +127,11 @@ export function ASidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { open } = useSidebar();
 
-  const { userInfo, isLoading } = useSelector((state) => state.auth);
+  const { userInfo, isLoading } = useSelector((state) => {
+    return state.auth;
+  });
 
-  const user = userInfo?.data?.user;
+  const user = userInfo?.data?.user || userInfo?.data;
 
   return (
     <>
@@ -216,7 +218,9 @@ export function ASidebar() {
                       className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     >
                       <Avatar className="h-8 w-8 rounded-full">
-                        <AvatarImage src={user?.profilePicture || ""} />
+                        {user?.image ? (
+                          <AvatarImage src={user.image} alt={user?.name} />
+                        ) : null}
                         <AvatarFallback className="rounded-full border border-gray-500">
                           {user?.name?.split(" ")?.[0]?.charAt(0)}
                           {user?.name?.split(" ")?.[1]?.charAt(0)}

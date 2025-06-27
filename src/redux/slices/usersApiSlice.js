@@ -43,5 +43,6 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetUserQuery,
+  useGetTotalUserQuery,
   useLogoutMutation,
 } = userApiSlice;

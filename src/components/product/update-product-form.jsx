@@ -238,7 +238,7 @@ export default function UpdateProductForm({ onClose, productId }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="dark:text-[#f1f7feb5] text-sm">
-                      Task description
+                      Product description
                       <span className="text-xs font-extralight ml-2">
                         Optional
                       </span>
